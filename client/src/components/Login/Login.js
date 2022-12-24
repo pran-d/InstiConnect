@@ -31,13 +31,12 @@ export default function Login() {
 					path: "/",
 				});
 				// redirect user to the auth page
-				window.location.href = `/auth`;
-
-				alert("done");
+				window.location.href = `/auth/${result.data.username}`;
+				// alert("done");
 			})
 			.catch((err) => {
 				console.log(err);
-				alert("not done");
+				// alert("not done");
 			});
 	};
 

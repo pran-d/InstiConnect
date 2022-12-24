@@ -2,6 +2,11 @@ import User from "../models/User.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
+const createToken = (id, email, username) => {
+	// Create token (for 2 hours)
+	return jwt.sign({ id, email, username }, process.env.TOKEN_KEY, { expiresIn: "2h" });
+};
+
 export const userReg = async (req, res) => {
 	try {
 		const salt = await bcrypt.genSalt(10);
@@ -12,14 +17,12 @@ export const userReg = async (req, res) => {
 			email: req.body.email,
 			password: hashedPassword,
 		});
-		// Create token
-		const token = jwt.sign({ user_id: newUser._id, email: newUser.email }, process.env.TOKEN_KEY, {
-			expiresIn: "2h",
-		});
+		// Create token (for 24 hours)
+		const token = createToken(newUser._id, newUser.email, newUser.username);
 		// save user token
 		newUser.token = token;
-
 		const user = await newUser.save();
+		res.cookie("jwt", token, { httpOnly: true, maxAge: 86400 * 1000 });
 		res.status(200).json(user);
 	} catch (error) {
 		res.status(400).json(error.message);
@@ -41,19 +44,11 @@ export const Login = async (req, res) => {
 		}
 
 		//   create JWT token
-		const token = jwt.sign(
-			{
-				userId: user._id,
-				userEmail: user.email,
-			},
-			"RANDOM-TOKEN",
-			{ expiresIn: "24h" }
-		);
-		// save user token
+		const token = createToken(user._id, user.email, user.username);
 		user.token = token;
 		user.save();
-
-		res.status(200).send({ message: `Welcome, ${user.username}`, email: user.email, token });
+		res.cookie("jwt", token, { httpOnly: true, maxAge: 86400 * 1000 });
+		res.status(200).send({ email: user.email, token, username: user.username });
 	} catch (err) {
 		return res.status(500).json(err.message);
 	}

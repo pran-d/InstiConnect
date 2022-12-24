@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import isEmail from "validator/lib/isEmail.js";
 
 const userSchema = mongoose.Schema(
 	{
@@ -14,6 +15,7 @@ const userSchema = mongoose.Schema(
 			required: true,
 			max: 50,
 			unique: true,
+			validate: [isEmail, "Invalid email"],
 		},
 		password: {
 			type: String,
@@ -32,6 +34,11 @@ const userSchema = mongoose.Schema(
 			type: String,
 			max: 50,
 		},
+		posts: [
+			{
+				type: mongoose.Schema.Types.ObjectId,
+			},
+		],
 		isAdmin: {
 			type: Boolean,
 			required: true,

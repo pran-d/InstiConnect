@@ -5,6 +5,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import morgan from "morgan";
 import helmet from "helmet";
+import cookieParser from "cookie-parser";
 
 import postRoutes from "./routes/posts.js";
 import userRoute from "./routes/users.js";
@@ -15,7 +16,7 @@ const app = express();
 
 app.use(bodyParser.json({ extended: true }));
 app.use(bodyParser.urlencoded({ extended: false }));
-
+app.use(cookieParser());
 // app.use((req, res, next) => {
 // 	res.setHeader("Access-Control-Allow-Origin", "*");
 // 	res.setHeader(

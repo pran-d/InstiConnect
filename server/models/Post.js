@@ -2,13 +2,15 @@ import mongoose from "mongoose";
 
 const PostSchema = mongoose.Schema(
 	{
-		// postId: {
-		// 	type: String,
-		// 	required: true,
-		// },
-		userId: {
+		username: {
+			// type: mongoose.Schema.Types.ObjectId,
 			type: String,
 			required: true,
+		},
+		title: {
+			type: String,
+			min: 1,
+			max: 30,
 		},
 		desc: {
 			type: String,
@@ -17,6 +19,7 @@ const PostSchema = mongoose.Schema(
 		},
 		type: {
 			type: String,
+			enum: ["Question", "Plan", "Recruitments", "General", "Expressive"],
 			required: true,
 		},
 		img: {

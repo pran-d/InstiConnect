@@ -1,0 +1,15 @@
+.login button,
+.register button {
+	padding-left: 0.5rem;
+	padding-right: 0.5rem;
+	border-radius: 1rem;
+	background-color: transparent;
+	border-color: rgb(16, 6, 100);
+	color: rgb(16, 6, 100);
+}
+
+.login button:hover,
+.register button:hover {
+	background-color: rgb(16, 6, 100);
+	color: white;
+}

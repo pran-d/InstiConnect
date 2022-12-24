@@ -1,5 +1,16 @@
 import Post from "../models/Post.js";
 
+// const authHeader = () => {
+// 	const user = JSON.parse(localStorage.getItem("user"));
+
+// 	if (user && user.accessToken) {
+// 		// for Node.js Express back-end
+// 		return { "x-access-token": user.accessToken };
+// 	} else {
+// 		return {};
+// 	}
+// };
+
 export const getPost = async (req, res) => {
 	try {
 		const post = await Post.findById(req.params.id);
@@ -20,12 +31,30 @@ export const createPost = async (req, res) => {
 	}
 };
 
-export const deletePost = async (req, res) => {
-	const post = await Post.find({ postId: req.params.id });
+export const editPost = async (req, res) => {
+	const post = await Post.findOne({ _id: req.params.id });
 	!post && res.status(404).json("Post doesn't exist!");
-	if (post.userId == req.body.userId) {
+	if (post.username !== req.body.username) {
+		return res.status(403).json("you can only edit your own posts");
+	} else {
 		try {
-			await post.deleteOne();
+			await Post.updateOne(
+				{ _id: req.params.id },
+				{ $set: { title: req.body.title, desc: req.body.desc, type: req.body.type } }
+			);
+			res.status(201).json("successfully edited");
+		} catch (err) {
+			res.status(409).json({ message: err.message });
+		}
+	}
+};
+
+export const deletePost = async (req, res) => {
+	const post = await Post.findOne({ _id: req.params.id });
+	!post && res.status(404).json("Post doesn't exist!");
+	if (post.username === req.body.username) {
+		try {
+			await Post.deleteOne({ _id: req.params.id });
 			res.status(201).json("successfully deleted");
 		} catch (error) {
 			res.status(400).json({ message: error.message });
