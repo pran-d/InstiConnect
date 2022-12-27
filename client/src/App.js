@@ -29,13 +29,6 @@ const App = () => {
 						style={{ textDecoration: "underline white dotted 3px", color: "white" }}>
 						InstiConnect - a space for students
 					</motion.h1>
-					{!token && (
-						<section id="navigation">
-							<a href="/">Home</a>
-							<a href="/login">Login</a>
-							<a href="/register">Register</a>
-						</section>
-					)}
 				</Col>
 			</Row>
 

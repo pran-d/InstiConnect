@@ -48,7 +48,7 @@ export const Login = async (req, res) => {
 		user.token = token;
 		user.save();
 		res.cookie("jwt", token, { httpOnly: true, maxAge: 86400 * 1000 });
-		res.status(200).send({ email: user.email, token, username: user.username });
+		res.status(200).send({ email: user.email, token, username: user.username, id: user._id });
 	} catch (err) {
 		return res.status(500).json(err.message);
 	}

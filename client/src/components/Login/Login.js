@@ -1,9 +1,10 @@
 import React from "react";
-import { Form, Button } from "react-bootstrap";
+import { Form, Button, Nav } from "react-bootstrap";
 import { useState } from "react";
 import axios from "axios";
 import Cookies from "universal-cookie";
 import useStyles from "./styles";
+import Navbar from "../Navbar/Navbar";
 
 const cookies = new Cookies();
 export default function Login() {
@@ -36,47 +37,55 @@ export default function Login() {
 			})
 			.catch((err) => {
 				console.log(err);
-				// alert("not done");
+				if (err.response.status === 400) {
+					window.alert("Wrong password!");
+				}
+				if (err.response.status === 404) {
+					window.alert("Invalid email!");
+				}
 			});
 	};
 
 	return (
-		<div className={classes.mainContainer}>
-			<h2 className={classes.textCenter}>Login</h2>
-			<Form>
-				{/* email */}
-				<Form.Group controlId="formBasicEmail">
-					<Form.Label>Email address</Form.Label>
-					<Form.Control
-						type="email"
-						placeholder="Enter email"
-						name="email"
-						value={email}
-						onChange={(e) => setEmail(e.target.value)}
-					/>
-				</Form.Group>
+		<div>
+			<Navbar login={true} />
+			<div className={classes.mainContainer}>
+				<h2 className={classes.textCenter}>Login</h2>
+				<Form>
+					{/* email */}
+					<Form.Group controlId="formBasicEmail">
+						<Form.Label>Email address</Form.Label>
+						<Form.Control
+							type="email"
+							placeholder="Enter email"
+							name="email"
+							value={email}
+							onChange={(e) => setEmail(e.target.value)}
+						/>
+					</Form.Group>
 
-				{/* password */}
-				<Form.Group controlId="formBasicPasseord">
-					<Form.Label>Password</Form.Label>
-					<Form.Control
-						type="password"
-						placeholder="Password"
-						name="password"
-						value={password}
-						onChange={(e) => setPassword(e.target.value)}
-					/>
-				</Form.Group>
+					{/* password */}
+					<Form.Group controlId="formBasicPasseord">
+						<Form.Label>Password</Form.Label>
+						<Form.Control
+							type="password"
+							placeholder="Password"
+							name="password"
+							value={password}
+							onChange={(e) => setPassword(e.target.value)}
+						/>
+					</Form.Group>
 
-				{/* submit button */}
-				<div className={classes.topPadding}>
-					<Button variant="primary" type="submit" onClick={(e) => handleSubmit(e)}>
-						Submit
-					</Button>
-				</div>
+					{/* submit button */}
+					<div className={classes.topPadding}>
+						<Button variant="primary" type="submit" onClick={(e) => handleSubmit(e)}>
+							Submit
+						</Button>
+					</div>
 
-				{login ? <p>Loading...</p> : <p>Login failed!</p>}
-			</Form>
+					{login ? <p>Loading...</p> : <p>Login failed!</p>}
+				</Form>
+			</div>
 		</div>
 	);
 }

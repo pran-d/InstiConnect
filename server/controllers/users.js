@@ -1,22 +1,28 @@
 import User from "../models/User.js";
 import bcrypt from "bcrypt";
 
+const getPayload = function (token) {
+	let base64Payload = token.split(".")[1];
+	let payloadBuffer = Buffer.from(base64Payload, "base64");
+	let payload = JSON.parse(payloadBuffer.toString());
+	return payload;
+};
+
 export const updateUser = async (req, res) => {
-	if (req.body.userId === req.params.id || req.body.isAdmin) {
-		if (req.body.password) {
+	const token = req.headers.authorization.split(" ")[1];
+	const user = await User.findById({ _id: req.params.id });
+	if (getPayload(token).id === req.params.id || req.body.isAdmin) {
+		const pass = await bcrypt.compare(req.body.currentPass, user.password);
+		if (req.body.password && pass) {
 			try {
 				const salt = await bcrypt.genSalt(10);
-				req.body.password = await bcrypt.hash(req.body.password, salt);
+				let pass = await bcrypt.hash(req.body.password, salt);
+				await User.findByIdAndUpdate(req.params.id, { $set: { password: pass } });
+				res.status(200).json("Account has been updated");
 			} catch (err) {
-				return res.status(500).res.json(err);
+				return res.status(500).json(err);
 			}
-		}
-		try {
-			const user = await User.findByIdAndUpdate(req.params.id, { $set: req.body });
-			res.status(200).json("Account has been updated");
-		} catch (err) {
-			return res.status(500).res.json(err);
-		}
+		} else res.status(401).json("Unauthorized to change password");
 	} else return res.status(403).json("You can update only your account!");
 };
 
@@ -47,12 +53,13 @@ export const getUser = async (req, res) => {
 
 export const deleteUser = async (req, res) => {
 	try {
-		const user = await User.findOne({ id: req.params.id });
+		const user = await User.findOne({ _id: req.params.id });
+		const token = req.headers.authorization.split(" ")[1];
 		!user && res.status(404).json("user not found");
-
-		if (req.body.userId == req.params.id || req.body.isAdmin) {
+		let pass = await bcrypt.compare(req.body.password, user.password);
+		if (getPayload(token).id == req.params.id || req.body.isAdmin) {
 			try {
-				await User.deleteOne({ id: user.id });
+				await User.deleteOne({ _id: user.id });
 				res.status(200).json("deleted successfully!");
 			} catch (err) {
 				return res.status(500).json(err);

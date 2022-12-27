@@ -1,7 +1,6 @@
 import React from "react";
 import { Route, Redirect } from "react-router-dom";
 import Cookies from "universal-cookie";
-import TokenAuth from "../utils/TokenAuth";
 const cookies = new Cookies();
 
 // receives component and any other props represented by ...rest

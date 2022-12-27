@@ -4,7 +4,7 @@ import axios from "axios";
 import Cookies from "universal-cookie";
 import { Button } from "react-bootstrap";
 import Post from "./Posts/Post/Post.js";
-import useStyles from "../styles.js";
+import useStyles from "./styles.js";
 import { motion } from "framer-motion/dist/framer-motion";
 import "../index.css";
 
@@ -120,6 +120,16 @@ export function AuthComponent() {
 								Settings
 							</motion.button>
 						</a>
+
+						<motion.button
+							variants={navVariants}
+							initial="hidden"
+							animate="visible"
+							custom={5}
+							className={classes.danger}
+							onClick={() => logout()}>
+							Logout
+						</motion.button>
 					</section>
 					<div className={classes.mainContainer}>
 						<h1>Posts</h1>
