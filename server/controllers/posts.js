@@ -1,15 +1,11 @@
 import Post from "../models/Post.js";
 
-// const authHeader = () => {
-// 	const user = JSON.parse(localStorage.getItem("user"));
-
-// 	if (user && user.accessToken) {
-// 		// for Node.js Express back-end
-// 		return { "x-access-token": user.accessToken };
-// 	} else {
-// 		return {};
-// 	}
-// };
+const getPayload = function (token) {
+	let base64Payload = token.split(".")[1];
+	let payloadBuffer = Buffer.from(base64Payload, "base64");
+	let payload = JSON.parse(payloadBuffer.toString());
+	return payload;
+};
 
 export const getPost = async (req, res) => {
 	try {
@@ -52,7 +48,8 @@ export const editPost = async (req, res) => {
 export const deletePost = async (req, res) => {
 	const post = await Post.findOne({ _id: req.params.id });
 	!post && res.status(404).json("Post doesn't exist!");
-	if (post.username === req.body.username) {
+	const token = req.headers.authorization.split(" ")[1];
+	if (post.username === getPayload(token).username) {
 		try {
 			await Post.deleteOne({ _id: req.params.id });
 			res.status(201).json("successfully deleted");
